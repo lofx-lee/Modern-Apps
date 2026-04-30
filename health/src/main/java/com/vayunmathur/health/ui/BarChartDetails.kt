@@ -277,8 +277,12 @@ fun BarChartDetails(
             )
         }.reversed() else listOf()
 
-        val nonNullPrimary = history.map { it.value }
-        val nonNullSecondary = if (config.isDualSeries) history.mapNotNull { it.secondaryValue } else emptyList()
+        val nonNullPrimary = if (selectedTab == 0) rawPairs.map { it.second } else history.map { it.value }
+        val nonNullSecondary = if (selectedTab == 0) {
+            if (config.isDualSeries) rawPairs.map { it.third } else emptyList()
+        } else {
+            if (config.isDualSeries) history.mapNotNull { it.secondaryValue } else emptyList()
+        }
 
         dataState = MetricDashboardData(
             totalValue = nonNullPrimary.sum(),
@@ -288,9 +292,12 @@ fun BarChartDetails(
             secondaryChartData = mappedSecondaryChart,
             historyItems = history,
             totalBarCount = rawPairs.size,
-            primaryRange = mappedChart.minOfOrNull { it.second }?.let { min ->
-                mappedChart.maxOfOrNull { it.second }?.let { max ->
-                    if (min < max) min..max else if (min > max) max..min else min..min + 1.0
+            primaryRange = mappedChart.mapNotNull { it.second }.let { vals ->
+                if (vals.isEmpty()) null
+                else vals.minOrNull()!!.let { min ->
+                    vals.maxOrNull()!!.let { max ->
+                        if (min < max) min..max else if (min > max) max..min else min..min + 1.0
+                    }
                 }
             }
         )
@@ -374,6 +381,12 @@ fun BarChartDetails(
                 Spacer(Modifier.height(16.dp))
 
                 val hasData = dataState.chartData.any { it.second != null }
+                val chartGoalValue = if (config.isLineChart) config.dailyGoal else when (selectedTab) {
+                    0 -> config.dailyGoal / 24.0
+                    3 -> config.dailyGoal * 30.0
+                    else -> config.dailyGoal
+                }
+
                 if (hasData) {
                     Row(verticalAlignment = Alignment.Bottom) {
                         val formatVal = { v: Double -> if (config.useDecimals) v.round(1).toString() else v.toLong().toStringCommas() }
@@ -409,17 +422,17 @@ fun BarChartDetails(
                     GenericLineChart(
                         data = dataState.chartData,
                         secondaryData = dataState.secondaryChartData,
-                        goalValue = config.dailyGoal,
-                        secondaryGoal = config.secondaryGoal,
+                        goalValue = chartGoalValue,
+                        secondaryGoal = config.secondaryGoal?.let { it * (chartGoalValue / config.dailyGoal) },
                         lineColor = MaterialTheme.colorScheme.primary,
                         secondaryLineColor = MaterialTheme.colorScheme.tertiary,
                         goalColor = MaterialTheme.colorScheme.secondary
                     )
                 } else {
                     GenericBarChart(
-                        data = dataState.chartData.map { it.first to (it.second?.toLong() ?: 0L) },
+                        data = dataState.chartData.map { it.first to (it.second ?: 0.0) },
                         totalBarCount = dataState.totalBarCount,
-                        goalValue = config.dailyGoal.toLong(),
+                        goalValue = chartGoalValue,
                         barColor = MaterialTheme.colorScheme.primary,
                         goalColor = MaterialTheme.colorScheme.secondary
                     )
@@ -605,14 +618,14 @@ fun GenericLineChart(
 
 @Composable
 fun GenericBarChart(
-    data: List<Pair<String, Long>>,
+    data: List<Pair<String, Double>>,
     totalBarCount: Int,
-    goalValue: Long,
+    goalValue: Double,
     barColor: Color,
     goalColor: Color
 ) {
-    val maxValueFound = data.maxOfOrNull { it.second } ?: 0L
-    val maxChartValue = (maxValueFound.toFloat() * 1.2f).coerceAtLeast(goalValue * 1.2f).coerceAtLeast(10f)
+    val maxValueFound = data.maxOfOrNull { it.second } ?: 0.0
+    val maxChartValue = (maxValueFound.toFloat() * 1.2f).coerceAtLeast(goalValue.toFloat() * 1.2f).coerceAtLeast(10f)
     val labelColor = LocalContentColor.current.copy(alpha = 0.6f)
 
     val chartHeight = 180.dp
@@ -692,7 +705,7 @@ fun GenericBarChart(
 
         val goalY = (1f - (goalValue.toFloat() / maxChartValue)) * actualChartHeightPx
         Text(
-            text = format(goalValue.toDouble()),
+            text = format(goalValue),
             color = goalColor,
             fontSize = 10.sp,
             modifier = Modifier

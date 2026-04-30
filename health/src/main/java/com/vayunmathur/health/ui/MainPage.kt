@@ -90,7 +90,7 @@ fun MainPage(backStack: NavBackStack<Route>) {
     var bodyWaterMass by remember { mutableStateOf<Double?>(null) }
 
     val dayRange = remember(today) {
-        val start = today.atStartOfDayIn(TimeZone.currentSystemDefault()).minus(24.hours)
+        val start = today.atStartOfDayIn(TimeZone.currentSystemDefault())
         start to start.plus(24.hours)
     }
     val dayStart = dayRange.first
