@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">PDF</string>
+    <string name="ok">Sobib</string>
+    <string name="pdf_viewer_title">PDF-failide näitaja</string>
+    <string name="search_label">Otsi</string>
+    <string name="search_result_counter">%1$d / %2$d</string>
+    <string name="password_dialog_title">Salasõna on vajalik</string>
+    <string name="password_dialog_message">See PDF-fail on kaitstud salasõnaga. Palun sisesta salasõna.</string>
+    <string name="password_label">Salasõna</string>
+    <string name="incorrect_password">Salasõna pole õige. Palun proovi uuesti.</string>
+    <string name="open_pdf">Ava PDF-fail</string>
+    <string name="capture_pdf">Hõiva sisu PDF-failina</string>
+    <string name="capture_pdf_title">Hõiva sisu PDF-failina</string>
+    <string name="request_camera_permission">Küsi õigust kasutada kaamerat</string>
+    <string name="upload_image">Laadi pilt üles</string>
+    <string name="pdf_saved">PDF-faili salvestamine õnnestus</string>
+    <string name="pdf_save_error">PDF-faili salvestamisel tekkis viga</string>
+    <string name="share_pdf">Jaga PDF-faili</string>
 </resources>
