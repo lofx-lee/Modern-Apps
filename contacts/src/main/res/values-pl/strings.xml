@@ -15,7 +15,7 @@
     <string name="favorites">Ulubione</string>
     <string name="user_profile">Profil użytkownika</string>
     <string name="profiles">Profile</string>
-    <string name="export_contacts">Eksportuj wybrane kontakty</string>
+    <string name="export_contacts">Eksportuj wszystkie kontakty</string>
     <string name="on_device">Na urządzeniu</string>
     <string name="add_contact">Dodaj kontakt</string>
     <string name="edit_contact">Edytuj kontakt</string>
@@ -62,4 +62,13 @@
     <string name="delete_contact_name_confirm">Czy na pewno chcesz usunąć „%1$s”? Tej czynności nie można cofnąć.</string>
     <string name="add_email">Dodaj email</string>
     <string name="full_name_format">%1$s %2$s</string>
+    <string name="calendar_sync">Synchronizacja kalendarza</string>
+    <string name="sync_contacts_calendar">Pokaż urodziny w kalendarzu</string>
+    <string name="contacts_calendar_name">Kontakty</string>
+    <string name="anniversary">Rocznica</string>
+    <string name="backup_and_export">Kopia zapasowa i eksport</string>
+    <string name="grant_calendar_permissions">Udziel uprawnień do kalendarza</string>
+    <string name="delete_selected_contacts_title">Usuń wybrane kontakty</string>
+    <string name="delete_selected_contacts_confirm">Czy na pewno chcesz usunąć %1$d wybranych kontaktów? Tej czynności nie można cofnąć.</string>
+    <string name="selected_count">%1$d wybrano</string>
 </resources>
