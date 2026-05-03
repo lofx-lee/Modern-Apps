@@ -17,7 +17,12 @@ import com.vayunmathur.calendar.data.Event
 import com.vayunmathur.calendar.data.Calendar
 
 
+import com.vayunmathur.library.util.DataStoreUtils
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
+
 class CalendarViewModel(application: Application) : AndroidViewModel(application) {
+    val dataStore = DataStoreUtils.getInstance(application)
 
     private val _events = MutableStateFlow<List<Event>>(emptyList())
     val events: StateFlow<List<Event>> = _events.asStateFlow()
@@ -32,6 +37,27 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     // persist the last viewed date for the calendar (used to restore viewed week across restarts)
     private val _lastViewedDate = MutableStateFlow<LocalDate?>(null)
     val lastViewedDate: StateFlow<LocalDate?> = _lastViewedDate.asStateFlow()
+
+    enum class CalendarLayout(val shortName: String, val prettyName: String) {
+        Agenda("A", "Agenda"),
+        Day("D", "Day"),
+        WorkWeek("W5", "Work Week"),
+        FullWeek("W7", "Full Week"),
+        Month("M", "Month"),
+        WorkWeekSummary("W5S", "Work Week Summary"),
+        FullWeekSummary("W7S", "Full Week Summary")
+    }
+
+    private val _currentLayout = MutableStateFlow(
+        dataStore.getString("default_calendar_layout")?.let { saved ->
+            try { CalendarLayout.valueOf(saved) } catch (e: Exception) { CalendarLayout.FullWeek }
+        } ?: CalendarLayout.FullWeek
+    )
+    val currentLayout: StateFlow<CalendarLayout> = _currentLayout.asStateFlow()
+
+    fun setLayout(layout: CalendarLayout) {
+        _currentLayout.value = layout
+    }
 
     fun setLastViewedDate(d: LocalDate?) {
         _lastViewedDate.value = d
