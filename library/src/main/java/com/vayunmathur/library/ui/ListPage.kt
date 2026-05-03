@@ -354,7 +354,7 @@ inline fun <reified T : ReorderableDatabaseItem<T>, Route : NavKey, reified Edit
                                 trailingContent = {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
                                         trailingContent(item)
-                                        if (!isSelectionMode || isContiguous) {
+                                        if (localData.size > 1 && selectedIds.size < localData.size && (!isSelectionMode || isContiguous)) {
                                             IconButton(
                                                 modifier = Modifier.draggableHandle(
                                                     onDragStarted = {
